@@ -70,6 +70,7 @@ python-devel
 openssl-devel
 make
 libtool
+mysql
 patch
 automake
 libxslt-devel
@@ -136,7 +137,10 @@ cat > /root/.pydistutils.cfg << _Longgeek_
 index-url = http://$http_server/cobbler/repo_mirror/pip-requirements
 _Longgeek_
 
+pip install pbr six cffi
+
 ### SSH Config ###
 sed -i "s/#UseDNS yes/UseDNS no/"  /etc/ssh/sshd_config
 sed -i 's/^GSSAPIAuthentication yes$/GSSAPIAuthentication no/' /etc/ssh/sshd_config
+
 chkconfig kdump off
