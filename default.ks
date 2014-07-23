@@ -140,7 +140,6 @@ _Longgeek_
 pip install pbr six cffi
 
 ### SSH Config ###
-sed -i "s/#UseDNS yes/UseDNS no/"  /etc/ssh/sshd_config
-sed -i 's/^GSSAPIAuthentication yes$/GSSAPIAuthentication no/' /etc/ssh/sshd_config
+echo 'StrictHostKeyChecking  no' >> etc/ssh/ssh_config
 
 chkconfig kdump off
