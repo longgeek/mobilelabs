@@ -167,6 +167,10 @@ fi
 yum clean all
 yum update
 
+### Puppet ###
+rm -fr /etc/puppet
+cp -r puppet /etc/
+
 ### SSH ###
 sed -i "s/#UseDNS yes/UseDNS no/"  /etc/ssh/sshd_config
 echo 'StrictHostKeyChecking  no' >> etc/ssh/ssh_config
