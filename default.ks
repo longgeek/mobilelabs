@@ -65,7 +65,6 @@ vim
 dstat
 gcc
 gcc-c++
-libffi-devel
 python-devel
 openssl-devel
 make
@@ -79,11 +78,11 @@ MySQL-python
 %post
 echo "$http_server $puppet_server" >> /etc/hosts
 $SNIPPET('log_ks_post')
-# Start yum configuration 
+# Start yum configuration
 $yum_config_stanza
 ### Repo Setup ###
 mkdir /etc/yum.repos.d/CentOS-Repos
-mv /etc/yum.repos.d/CentOS* /etc/yum.repos.d/CentOS-Repos 
+mv /etc/yum.repos.d/CentOS* /etc/yum.repos.d/CentOS-Repos
 cat >> /etc/yum.repos.d/cobbler-config.repo << _Longgeek_
 [core-1]
 name=core-1
