@@ -166,6 +166,17 @@ fi
 
 yum clean all
 yum update
+
+### SSH ###
+sed -i "s/#UseDNS yes/UseDNS no/"  /etc/ssh/sshd_config
+echo 'StrictHostKeyChecking  no' >> etc/ssh/ssh_config
+sed -i 's/^GSSAPIAuthentication yes$/GSSAPIAuthentication no/' /etc/ssh/sshd_config
+rm -fr ~/.ssh/*
+sh-keygen  -t rsa -f ~/.ssh/id_rsa  -N ''
+rm -f /etc/puppet/files/bases/id_rsa*
+cp /root/.ssh/id_rsa* /etc/puppet/files/bases/
+chmod 755 /etc/puppet/files/bases/id_rsa
+
 cobbler sync
 echo '*' > /etc/puppet/autosign.conf
 chkconfig ntpd on
@@ -174,6 +185,7 @@ chkconfig xinetd on
 chkconfig dnsmasq on
 chkconfig cobblerd on
 chkconfig puppetmaster on
+/etc/init.d/sshd restart
 /etc/init.d/httpd restart
 /etc/init.d/xinetd restart
 /etc/init.d/dnsmasq restart
