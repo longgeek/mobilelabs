@@ -1,21 +1,29 @@
 #!/bin/bash
 
 TOP_DIR=$(cd $(dirname "$0") && pwd)
-DVD1_NAME=$(file /opt/*.iso | grep 'CentOS_6.[4]' | grep bootable | awk -F: '{print $1}' | awk -F/ '{print $3}')
-DVD2_NAME=$(file /opt/*.iso | grep 'CentOS_6.[4]' | grep -v bootable | awk -F: '{print $1}' | awk -F/ '{print $3}')
-ISO_TYPE='CentOS-6.4'
+#DVD1_NAME=$(file /opt/*.iso | grep 'CentOS_6.[4]' | grep bootable | awk -F: '{print $1}' | awk -F/ '{print $3}')
+#DVD2_NAME=$(file /opt/*.iso | grep 'CentOS_6.[4]' | grep -v bootable | awk -F: '{print $1}' | awk -F/ '{print $3}')
+#ISO_TYPE='CentOS-6.4'
+ISO_TYPE='RHEL-6.4'
+DVD_NAME=$(file /opt/*.iso | grep 'RHEL_6.[4]' | grep bootable | awk -F: '{print $1}' | awk -F/ '{print $3}')
 IPADDR=$(ifconfig | grep 'inet addr:' | grep -v 127.0.0.1 | awk -F: '{print $2}' | awk '{print $1}')
 PASSWD=$(openssl passwd -1 -salt 'random-phrase-here' 'password')
 CHECK_HOSTNAME=$(hostname | awk -F. '{print $3}')
 COBBLER_CONFIG='/etc/cobbler/settings'
 
-if [ "$DVD1_NAME" = '' ]; then
-    echo 'Error: Centos dvd1 ISO file was not found in the /opt/ directory!'
-    exit 1
-fi
+## CentOS ##
+##if [ "$DVD1_NAME" = '' ]; then
+##    echo 'Error: Centos dvd1 ISO file was not found in the /opt/ directory!'
+##    exit 1
+##fi
+##
+##if [ "$DVD2_NAME" = '' ]; then
+##    echo 'Error: Centos dvd2 ISO file was not found in the /opt/ directory!'
+##    exit 1
+##fi
 
-if [ "$DVD2_NAME" = '' ]; then
-    echo 'Error: Centos dvd2 ISO file was not found in the /opt/ directory!'
+if [ "$DVD_NAME" = '' ]; then
+    echo 'Error: RHEL ISO file was not found in the /opt/ directory!'
     exit 1
 fi
 
@@ -37,15 +45,31 @@ sed -i 's/net.ipv4.ip_forward = 0/net.ipv4.ip_forward = 1/' /etc/sysctl.conf
 [ -e /var/www/cobbler/repo_mirror ] || mkdir -p /var/www/cobbler/repo_mirror
 [ -z /var/www/cobbler/repo_mirror ] || rm -fr /var/www/cobbler/repo_mirror/*
 cp -rf $TOP_DIR/*-requirements /var/www/cobbler/repo_mirror/
-[ -e /repo/dvd1 ] || mkdir -p /repo/{dvd1,dvd2}
-umount /opt/$DVD1_NAME > /dev/null 2>&1
-mount -t auto -o loop /opt/$DVD1_NAME /repo/dvd1
+##[ -e /repo/dvd1 ] || mkdir -p /repo/{dvd1,dvd2}
+[ -e /repo/dvd ] || mkdir -p /repo/dvd
+##umount /opt/$DVD1_NAME > /dev/null 2>&1
+umount /opt/$DVD_NAME > /dev/null 2>&1
+##mount -t auto -o loop /opt/$DVD1_NAME /repo/dvd1
+mount -t auto -o loop /opt/$DVD_NAME /repo/dvd
 [ -e /etc/yum.repos.d/backup ] || mkdir /etc/yum.repos.d/backup
 mv /etc/yum.repos.d/*.repo /etc/yum.repos.d/backup
+##cat > /etc/yum.repos.d/local.repo << _Longgeek_
+##[dvd]
+##name=dvd repo
+##baseurl=file:///repo/dvd1
+##gpgcheck=0
+##priority=1
+##
+##[local]
+##name=local repo
+##baseurl=file:///var/www/cobbler/repo_mirror/rpm-requirements
+##gpgcheck=0
+##priority=1
+##_Longgeek_
 cat > /etc/yum.repos.d/local.repo << _Longgeek_
 [dvd]
 name=dvd repo
-baseurl=file:///repo/dvd1
+baseurl=file:///repo/dvd
 gpgcheck=0
 priority=1
 
@@ -140,7 +164,8 @@ if [ $(cobbler distro list | wc -l) != '0' ]; then
         cobbler distro remove --name=$system
     done
 fi
-cobbler import --path=/repo/dvd1 --name=$ISO_TYPE --arch=x86_64
+##cobbler import --path=/repo/dvd1 --name=$ISO_TYPE --arch=x86_64
+cobbler import --path=/repo/dvd --name=$ISO_TYPE --arch=x86_64
 cobbler profile edit --name $ISO_TYPE-x86_64 --kickstart=/var/lib/cobbler/kickstarts/default.ks
 cat > /etc/yum.repos.d/local.repo << _Longgeek_
 [dvd]
@@ -173,10 +198,11 @@ cp -r puppet /etc/
 
 ### SSH ###
 sed -i "s/#UseDNS yes/UseDNS no/"  /etc/ssh/sshd_config
-echo 'StrictHostKeyChecking  no' >> etc/ssh/ssh_config
+[ grep 'StrictHostKeyChecking  o' /etc/ssh/ssh_config ] || echo 'StrictHostKeyChecking  no' >> /etc/ssh/ssh_config
 sed -i 's/^GSSAPIAuthentication yes$/GSSAPIAuthentication no/' /etc/ssh/sshd_config
+[ -e /root/.ssh/ ] || mkdir /root/.ssh
 rm -fr ~/.ssh/*
-sh-keygen  -t rsa -f ~/.ssh/id_rsa  -N ''
+ssh-keygen  -t rsa -f /root/.ssh/id_rsa  -N ''
 rm -f /etc/puppet/files/bases/id_rsa*
 cp /root/.ssh/id_rsa* /etc/puppet/files/bases/
 chmod 755 /etc/puppet/files/bases/id_rsa

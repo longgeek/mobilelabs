@@ -137,8 +137,6 @@ cat > /root/.pydistutils.cfg << _Longgeek_
 index-url = http://$http_server/cobbler/repo_mirror/pip-requirements
 _Longgeek_
 
-pip install pbr six cffi
-
 ### SSH Config ###
 echo 'StrictHostKeyChecking  no' >> etc/ssh/ssh_config
 
