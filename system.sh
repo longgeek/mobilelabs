@@ -10,7 +10,7 @@ cobbler system  add \
 --ip-address=192.168.3.40 \
 --subnet=255.255.255.0 \
 --gateway=192.168.3.254 \
---name-servers="192.168.3.167 114.114.114.114"\
+--name-servers='192.168.3.167 114.114.114.114' \
 --static=1
 
 cobbler system  add \
@@ -23,7 +23,7 @@ cobbler system  add \
 --ip-address=192.168.3.41 \
 --subnet=255.255.255.0 \
 --gateway=192.168.3.254 \
---name-servers="192.168.3.167 114.114.114.114"\
+--name-servers='192.168.3.167 114.114.114.114' \
 --static=1
 
 cobbler system  add \
@@ -36,7 +36,7 @@ cobbler system  add \
 --ip-address=192.168.3.42 \
 --subnet=255.255.255.0 \
 --gateway=192.168.3.254 \
---name-servers="192.168.3.167 114.114.114.114"\
+--name-servers='192.168.3.167 114.114.114.114' \
 --static=1
 
 #--power-type=ipmilan \
