@@ -1,5 +1,14 @@
 #!/bin/bash
 # Author: Longgeek <longgeek@gmail.com>
+
+clear
+echo "\n"
+echo '#########################'
+echo 'Note: Update nameservers!'
+echo '#########################'
+echo "\n"
+exit 0
+
 cobbler system  add \
 --name=control \
 --hostname=control \

@@ -1,0 +1,3 @@
+Defaults:root !requiretty
+
+root ALL = (root) NOPASSWD: SETENV: /usr/bin/neutron-rootwrap
