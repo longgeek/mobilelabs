@@ -4,7 +4,6 @@ class keystone::iptables {
                     /etc/init.d/iptables save',
         path    => $command_path,
         unless  => "grep '5000 -j ACCEPT' /etc/sysconfig/iptables",
-        notify  => Exec['35357'],
     }
 
     exec { '35357':
@@ -12,5 +11,6 @@ class keystone::iptables {
                     /etc/init.d/iptables save',
         path    => $command_path,
         unless  => "grep '35357 -j ACCEPT' /etc/sysconfig/iptables",
+        require => Exec['5000'],
     }
 }

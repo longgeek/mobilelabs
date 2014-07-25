@@ -3,7 +3,6 @@ class neutron-network::bridges {
         command => 'ovs-vsctl add-br br-int',
         path    => $command_path,
         unless  => 'ovs-vsctl list-br | grep br-int',
-        notify  => Exec['create br-ex'],
     }   
 
     exec { 'create br-ex':
@@ -11,7 +10,7 @@ class neutron-network::bridges {
                     ovs-vsctl add-port br-ex $br_ex",
         path    => $command_path,
         unless  => 'ovs-vsctl list-br | grep br-ex',
-        notify  => Exec['set interface'],
+        require => Exec['create br-int'],
     }
 
     exec { 'set interface':
@@ -23,12 +22,14 @@ class neutron-network::bridges {
         path    => $command_path,
         cwd     => '/etc/sysconfig/network-scripts/',
         unless  => 'ls /etc/sysconfig/network-scripts/ifcfg-br-ex',
-        notify  => [File["/etc/sysconfig/network-scripts/ifcfg-$br_ex"], Service['network']],
+        require => Exec['create br-ex'],
+        notify  => Service['network'],
     }
 
     file { "/etc/sysconfig/network-scripts/ifcfg-$br_ex":
         content => template('neutron/ifcfg-ethx.erb'),
         notify  => Service['network'],
+        require => Exec['set interface'],
     }
 
     service { 'network':

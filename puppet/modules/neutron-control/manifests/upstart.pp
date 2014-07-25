@@ -1,7 +1,6 @@
 class neutron-control::upstart {
     file { '/etc/init.d/neutron-server':
         source => 'puppet:///files/neutron/init.d/neutron-server',
-        notify => Exec['chkconfig neutron-server'],
     }
 
     exec { 'chkconfig neutron-server':
@@ -9,5 +8,6 @@ class neutron-control::upstart {
                     chkconfig neutron-server on',
         path    => $command_path,
         unless  => 'chkconfig --list | grep neutron-server',
+        require => File['/etc/init.d/neutron-server'],
     }
 }

@@ -9,5 +9,6 @@ class rabbitmq::password {
         command     => 'sh /etc/rabbitmq/change_password.sh',
         path        => $command_path,
         refreshonly => true,
+        require     => File['/etc/rabbitmq/change_password.sh'],
     }
 }

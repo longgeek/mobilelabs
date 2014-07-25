@@ -1,32 +1,31 @@
 class neutron-network::upstart {
     file { '/etc/init.d/neutron-l3-agent':
         source => 'puppet:///files/neutron/init.d/neutron-l3-agent',
-        notify => File['/etc/init.d/neutron-metadata-agent'],
     }
 
     file { '/etc/init.d/neutron-metadata-agent':
-        source => 'puppet:///files/neutron/init.d/neutron-metadata-agent',
-        notify => File['/etc/init.d/neutron-openvswitch-agent'],
+        source  => 'puppet:///files/neutron/init.d/neutron-metadata-agent',
+        require => File['/etc/init.d/neutron-l3-agent'],
     }
 
     file { '/etc/init.d/neutron-openvswitch-agent':
-        source => 'puppet:///files/neutron/init.d/neutron-openvswitch-agent',
-        notify => File['/etc/init.d/neutron-dhcp-agent'],
+        source  => 'puppet:///files/neutron/init.d/neutron-openvswitch-agent',
+        require => File['/etc/init.d/neutron-metadata-agent'],
     }
 
     file { '/etc/init.d/neutron-dhcp-agent':
-        source => 'puppet:///files/neutron/init.d/neutron-dhcp-agent',
-        notify => File['/etc/init.d/neutron-vpn-agent'],
+        source  => 'puppet:///files/neutron/init.d/neutron-dhcp-agent',
+        require => File['/etc/init.d/neutron-openvswitch-agent'],
     }
 
     file { '/etc/init.d/neutron-vpn-agent':
-        source => 'puppet:///files/neutron/init.d/neutron-vpn-agent',
-        notify => File['/etc/init.d/neutron-lbaas-agent'],
+        source  => 'puppet:///files/neutron/init.d/neutron-vpn-agent',
+        require => File['/etc/init.d/neutron-dhcp-agent'],
     }
 
     file { '/etc/init.d/neutron-lbaas-agent':
-        source => 'puppet:///files/neutron/init.d/neutron-lbaas-agent',
-        notify => Exec['chkconfig neutron-l3-agent'],
+        source  => 'puppet:///files/neutron/init.d/neutron-lbaas-agent',
+        require => File['/etc/init.d/neutron-vpn-agent'],
 
 ##        '/etc/init.d/neutron-metering-agent.conf':
 ##            source => 'puppet:///files/neutron/init.d/neutron-metering-agent.conf';
@@ -40,7 +39,7 @@ class neutron-network::upstart {
                     chkconfig neutron-l3-agent on',
         path    => $command_path,
         unless  => 'chkconfig --list | grep neutron-l3-agent',
-        notify  => Exec['chkconfig neutron-dhcp-agent'],
+        require => File['/etc/init.d/neutron-lbaas-agent'],
     }
 
     exec { 'chkconfig neutron-dhcp-agent':
@@ -48,7 +47,7 @@ class neutron-network::upstart {
                     chkconfig neutron-dhcp-agent on',
         path    => $command_path,
         unless  => 'chkconfig --list | grep neutron-dhcp-agent',
-        notify  => Exec['chkconfig neutron-metadata-agent'],
+        require => Exec['chkconfig neutron-l3-agent'],
     }
 
 ##    exec { 'chkconfig neutron-vpn-agent':
@@ -70,7 +69,7 @@ class neutron-network::upstart {
                     chkconfig neutron-metadata-agent on',
         path    => $command_path,
         unless  => 'chkconfig --list | grep neutron-metadata-agent',
-        notify  => Exec['chkconfig neutron-openvswitch-agent'],
+        require => Exec['chkconfig neutron-dhcp-agent'],
     }
 
     exec { 'chkconfig neutron-openvswitch-agent':
@@ -78,5 +77,6 @@ class neutron-network::upstart {
                     chkconfig neutron-openvswitch-agent on',
         path    => $command_path,
         unless  => 'chkconfig --list | grep neutron-openvswitch-agent',
+        require => Exec['chkconfig neutron-metadata-agent'],
     }
 }

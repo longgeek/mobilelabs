@@ -1,32 +1,31 @@
 class glance::configs {
     file { '/etc/logrotate.d/glance':
-        source => 'puppet:///files/glance/logrotate.d/glance',
-        notify => File['/etc/glance/policy.json'],
+        source  => 'puppet:///files/glance/logrotate.d/glance',
     }
  
     file { '/etc/glance/policy.json':
-        source => 'puppet:///files/glance/etc/policy.json',
-        notify => File['/etc/glance/schema-image.json'],
+        source  => 'puppet:///files/glance/etc/policy.json',
+        require => File['/etc/logrotate.d/glance'],
     }
  
     file { '/etc/glance/schema-image.json':
-        source => 'puppet:///files/glance/etc/schema-image.json',
-        notify => File['/etc/glance/glance-api-paste.ini'],
+        source  => 'puppet:///files/glance/etc/schema-image.json',
+        require => File['/etc/glance/policy.json'],
     }
  
     file { '/etc/glance/glance-api-paste.ini':
-        source => 'puppet:///files/glance/etc/glance-api-paste.ini',
-        notify => File['/etc/glance/glance-registry-paste.ini'],
+        source  => 'puppet:///files/glance/etc/glance-api-paste.ini',
+        require => File['/etc/glance/schema-image.json'],
     }
  
     file { '/etc/glance/glance-registry-paste.ini':
-        source => 'puppet:///files/glance/etc/glance-registry-paste.ini',
-        notify => File['/etc/glance/glance-cache.conf'],
+        source  => 'puppet:///files/glance/etc/glance-registry-paste.ini',
+        require => File['/etc/glance/glance-api-paste.ini'],
     }
  
     file { '/etc/glance/glance-cache.conf':
         content => template('glance/glance-cache.conf.erb'),
-        notify => File['/etc/glance/glance-api.conf'],
+        require => File['/etc/glance/glance-registry-paste.ini'],
     }
 
     file { '/etc/glance/glance-api.conf':

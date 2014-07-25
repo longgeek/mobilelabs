@@ -1,15 +1,15 @@
-#node 'control.pxe.com' {
-#    Class['bases'] -> Class['mysql'] -> Class['rabbitmq'] -> Class['keystone'] -> Class['glance'] -> Class['nova-control'] -> Class['horizon'] -> Class['neutron-control']
-#    include bases, mysql, rabbitmq, keystone, glance, nova-control, horizon, neutron-control
-#}
-#
-#node 'network.pxe.com' {
-#    include bases, neutron-network
-#}
-#
-#node 'compute.pxe.com' {
-#    include bases, nova-compute, neutron-compute
-#}
+node 'control' {
+    Class['bases'] -> Class['mysql'] -> Class['rabbitmq'] -> Class['keystone'] -> Class['glance'] -> Class['nova-control'] -> Class['horizon'] -> Class['neutron-control']
+    include bases, mysql, rabbitmq, keystone, glance, nova-control, horizon, neutron-control
+}
+
+node 'network' {
+    include bases, neutron-network
+}
+
+node 'compute' {
+    include bases, nova-compute, neutron-compute
+}
 
 $command_path                       = '/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin:/bin/bash'
 $sources_dir                        = '/thstack'

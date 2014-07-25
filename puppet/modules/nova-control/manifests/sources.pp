@@ -1,14 +1,15 @@
 class nova-control::sources {
-    file { "$sources_dir/tar/nova.tar.gz":
-        source => 'puppet:///files/sources/nova.tar.gz',
-        notify => Exec['untar nova.tar.gz'],
+    file { "$sources_dir/tar/nova.zip":
+        source => 'puppet:///files/sources/nova.zip',
+        notify => Exec['untar nova.zip'],
     }
 
-    exec { 'untar nova.tar.gz':
-        command     => "tar zxvf $sources_dir/tar/nova.tar.gz -C $sources_dir/sources/",
+    exec { 'untar nova.zip':
+        command     => "unzip $sources_dir/tar/nova.zip -d $sources_dir/sources/",
         path        => $command_path,
         refreshonly => true,
         notify      => Exec['install nova'],
+        require     => File["$sources_dir/tar/nova.zip"],
     }
 
     exec { 'install nova':
@@ -21,5 +22,6 @@ class nova-control::sources {
         timeout     => '0',
         tries       => '1',
         refreshonly => true,
+        require     => Exec['untar nova.zip'],
     }
 }

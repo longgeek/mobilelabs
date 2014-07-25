@@ -1,13 +1,14 @@
 class glance::sources {
-    file { "$sources_dir/tar/glance.tar.gz":
-        source => 'puppet:///files/sources/glance.tar.gz',
-        notify => Exec['untar glance.tar.gz'],
+    file { "$sources_dir/tar/glance.zip":
+        source => 'puppet:///files/sources/glance.zip',
+        notify => Exec['untar glance.zip'],
     }
 
-    exec { 'untar glance.tar.gz':
-        command     => "tar zxvf $sources_dir/tar/glance.tar.gz -C $sources_dir/sources/",
+    exec { 'untar glance.zip':
+        command     => "unzip $sources_dir/tar/glance.zip -d $sources_dir/sources/",
         path        => $command_path,
         refreshonly => true,
+        require     => File["$sources_dir/tar/glance.zip"],
         notify      => Exec['install glance'],
     }
 
@@ -19,5 +20,6 @@ class glance::sources {
         path        => $command_path,
         cwd         => "$sources_dir/sources/glance/",
         refreshonly => true,
+        require     => Exec['untar glance.zip'],
     }
 }

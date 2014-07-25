@@ -1,32 +1,31 @@
 class nova-control::upstart {
     file { '/etc/init.d/nova-api':
-        source => 'puppet:///files/nova/init.d/nova-api',
-        notify => File['/etc/init.d/nova-cert'],
+        source  => 'puppet:///files/nova/init.d/nova-api',
     }
 
     file { '/etc/init.d/nova-cert':
-        source => 'puppet:///files/nova/init.d/nova-cert',
-        notify => File['/etc/init.d/nova-scheduler'],
+        source  => 'puppet:///files/nova/init.d/nova-cert',
+        require => File['/etc/init.d/nova-api'],
     }
 
     file { '/etc/init.d/nova-scheduler':
-        source => 'puppet:///files/nova/init.d/nova-scheduler',
-        notify => File['/etc/init.d/nova-conductor'],
+        source  => 'puppet:///files/nova/init.d/nova-scheduler',
+        require => File['/etc/init.d/nova-cert'],
     }
 
     file { '/etc/init.d/nova-conductor':
-        source => 'puppet:///files/nova/init.d/nova-conductor',
-        notify => File['/etc/init.d/nova-consoleauth'],
+        source  => 'puppet:///files/nova/init.d/nova-conductor',
+        require => File['/etc/init.d/nova-scheduler'],
     }
 
     file { '/etc/init.d/nova-consoleauth':
-        source => 'puppet:///files/nova/init.d/nova-consoleauth',
-        notify => File['/etc/init.d/nova-novncproxy'],
+        source  => 'puppet:///files/nova/init.d/nova-consoleauth',
+        require => File['/etc/init.d/nova-conductor'],
     }
 
     file { '/etc/init.d/nova-novncproxy':
-        source => 'puppet:///files/nova/init.d/nova-novncproxy',
-        notify => Exec['chkconfig nova-api'],
+        source  => 'puppet:///files/nova/init.d/nova-novncproxy',
+        require => File['/etc/init.d/nova-consoleauth'],
     }
 
     exec { 'chkconfig nova-api':
@@ -34,7 +33,7 @@ class nova-control::upstart {
                     chkconfig nova-api on',
         path    => $command_path,
         unless  => 'chkconfig --list | grep nova-api',
-        notify  => Exec['chkconfig nova-cert'],
+        require => File['/etc/init.d/nova-novncproxy'],
     }
 
     exec { 'chkconfig nova-cert':
@@ -42,7 +41,7 @@ class nova-control::upstart {
                     chkconfig nova-cert on',
         path    => $command_path,
         unless  => 'chkconfig --list | grep nova-cert',
-        notify  => Exec['chkconfig nova-scheduler'],
+        require => Exec['chkconfig nova-api'],
     }
 
     exec { 'chkconfig nova-scheduler':
@@ -50,7 +49,7 @@ class nova-control::upstart {
                     chkconfig nova-scheduler on',
         path    => $command_path,
         unless  => 'chkconfig --list | grep nova-scheduler',
-        notify  => Exec['chkconfig nova-conductor'],
+        require => Exec['chkconfig nova-cert'],
     }
 
     exec { 'chkconfig nova-conductor':
@@ -58,7 +57,7 @@ class nova-control::upstart {
                     chkconfig nova-conductor on',
         path    => $command_path,
         unless  => 'chkconfig --list | grep nova-conductor',
-        notify  => Exec['chkconfig nova-consoleauth'],
+        require => Exec['chkconfig nova-scheduler'],
     }
 
     exec { 'chkconfig nova-consoleauth':
@@ -66,7 +65,7 @@ class nova-control::upstart {
                     chkconfig nova-consoleauth on',
         path    => $command_path,
         unless  => 'chkconfig --list | grep nova-consoleauth',
-        notify  => Exec['chkconfig nova-novncproxy'],
+        require => Exec['chkconfig nova-conductor'],
     }
 
     exec { 'chkconfig nova-novncproxy':
@@ -74,5 +73,6 @@ class nova-control::upstart {
                     chkconfig nova-novncproxy on',
         path    => $command_path,
         unless  => 'chkconfig --list | grep nova-novncproxy',
+        require => Exec['chkconfig nova-consoleauth'],
     }
 }

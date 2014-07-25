@@ -4,7 +4,6 @@ class glance::iptables {
                     /etc/init.d/iptables save',
         path    => $command_path,
         unless  => "grep '9191 -j ACCEPT' /etc/sysconfig/iptables",
-        notify  => Exec['9292'],
     }
 
     exec { '9292':
@@ -12,5 +11,6 @@ class glance::iptables {
                     /etc/init.d/iptables save',
         path    => $command_path,
         unless  => "grep '9292 -j ACCEPT' /etc/sysconfig/iptables",
+        require => Exec['9191'],
     }
 }

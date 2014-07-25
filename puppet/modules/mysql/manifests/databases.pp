@@ -5,7 +5,6 @@ class mysql::databases {
                     mysql -uroot -p$mysql_root_pass -e \"grant all on $keystone_db_name.* to '$keystone_db_user'@'$mysql_host' identified by '$keystone_db_password';\"",
         path    => $command_path,
         unless  => "mysqlshow -uroot -p$mysql_root_pass | grep $keystone_db_name",
-        notify  => Exec['create glance db'],
     }
 
     exec { 'create glance db':
@@ -14,7 +13,7 @@ class mysql::databases {
                     mysql -uroot -p$mysql_root_pass -e \"grant all on $glance_db_name.* to '$glance_db_user'@'$mysql_host' identified by '$glance_db_password';\"",
         path    => $command_path,
         unless  => "mysqlshow -uroot -p$mysql_root_pass | grep $glance_db_name",
-        notify  => Exec['create nova db'],
+        require => Exec['create keystone db'],
 ##        notify  => Exec['create cinder db'],
     }
 
@@ -33,7 +32,7 @@ class mysql::databases {
                     mysql -uroot -p$mysql_root_pass -e \"grant all on $nova_db_name.* to '$nova_db_user'@'$mysql_host' identified by '$nova_db_password';\"",
         path    => $command_path,
         unless  => "mysqlshow -uroot -p$mysql_root_pass | grep $nova_db_name",
-        notify  => Exec['create neutron db'],
+        require => Exec['create glance db'],
     }
 
     exec { 'create neutron db':
@@ -41,6 +40,7 @@ class mysql::databases {
                     mysql -uroot -p$mysql_root_pass -e \"grant all on $neutron_db_name.* to '$neutron_db_user'@'%' identified by '$neutron_db_password';\" && \
                     mysql -uroot -p$mysql_root_pass -e \"grant all on $neutron_db_name.* to '$neutron_db_user'@'$mysql_host' identified by '$neutron_db_password';\"",
         path    => $command_path,
+        require => Exec['create nova db'],
         unless  => "mysqlshow -uroot -p$mysql_root_pass | grep $neutron_db_name",
     }
 

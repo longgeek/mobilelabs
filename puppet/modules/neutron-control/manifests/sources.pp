@@ -1,13 +1,14 @@
 class neutron-control::sources {
-    file { "$sources_dir/tar/neutron.tar.gz":
-        source => 'puppet:///files/sources/neutron.tar.gz',
-        notify => Exec['untar neutron.tar.gz'],
+    file { "$sources_dir/tar/neutron.zip":
+        source => 'puppet:///files/sources/neutron.zip',
+        notify => Exec['untar neutron.zip'],
     }
 
-    exec { 'untar neutron.tar.gz':
-        command     => "tar zxvf $sources_dir/tar/neutron.tar.gz -C $sources_dir/sources/",
+    exec { 'untar neutron.zip':
+        command     => "unzip $sources_dir/tar/neutron.zip -d $sources_dir/sources/",
         path        => $command_path,
         refreshonly => true,
+        require     => File["$sources_dir/tar/neutron.zip"],
         notify      => Exec['install neutron'],
     }
 
@@ -19,5 +20,6 @@ class neutron-control::sources {
         path        => $command_path,
         cwd         => "$sources_dir/sources/neutron/",
         refreshonly => true,
+        require     => Exec['untar neutron.zip'],
     }
 }

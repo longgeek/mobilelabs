@@ -9,8 +9,8 @@ root_helper = sudo neutron-rootwrap /etc/neutron/rootwrap.conf
 auth_url = <%= os_auth_url %>
 auth_region = <%= os_region_name %>
 admin_tenant_name = <%= service_tenant_name %>
-admin_user = <% neutron_user %>
-admin_password = <% neutron_password %>
+admin_user = <%= neutron_user %>
+admin_password = <%= neutron_password %>
 
 # Network service endpoint type to pull from the keystone catalog
 # endpoint_type = adminURL

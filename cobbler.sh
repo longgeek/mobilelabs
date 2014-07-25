@@ -198,7 +198,7 @@ cp -r puppet /etc/
 
 ### SSH ###
 sed -i "s/#UseDNS yes/UseDNS no/"  /etc/ssh/sshd_config
-[ grep 'StrictHostKeyChecking  o' /etc/ssh/ssh_config ] || echo 'StrictHostKeyChecking  no' >> /etc/ssh/ssh_config
+grep 'StrictHostKeyChecking  no' /etc/ssh/ssh_config || echo 'StrictHostKeyChecking  no' >> /etc/ssh/ssh_config
 sed -i 's/^GSSAPIAuthentication yes$/GSSAPIAuthentication no/' /etc/ssh/sshd_config
 [ -e /root/.ssh/ ] || mkdir /root/.ssh
 rm -fr ~/.ssh/*

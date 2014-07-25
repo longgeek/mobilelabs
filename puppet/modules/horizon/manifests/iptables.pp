@@ -4,7 +4,6 @@ class horizon::iptables {
                     /etc/init.d/iptables save',
         path    => $command_path,
         unless  => "grep '80 -j ACCEPT' /etc/sysconfig/iptables",
-        notify  => Exec['11211'],
     }
 
     exec { '11211':
@@ -12,5 +11,6 @@ class horizon::iptables {
                     /etc/init.d/iptables save',
         path    => $command_path,
         unless  => "grep '11211 -j ACCEPT' /etc/sysconfig/iptables",
+        require => Exec['80'],
     }
 }

@@ -4,7 +4,6 @@ class nova-compute::iptables {
                     /etc/init.d/iptables save',
         path    => $command_path,
         unless  => "grep 'tcp --dport 53 -j ACCEPT' /etc/sysconfig/iptables",
-        notify  => Exec['udp 53'],
     }
 
     exec { 'udp 53':
@@ -12,7 +11,7 @@ class nova-compute::iptables {
                     /etc/init.d/iptables save',
         path    => $command_path,
         unless  => "grep 'udp --dport 53 -j ACCEPT' /etc/sysconfig/iptables",
-        notify  => Exec['5900:6400'],
+        require => Exec['tcp 53'],
     }
 
     exec { '5900:6400':
@@ -20,5 +19,6 @@ class nova-compute::iptables {
                     /etc/init.d/iptables save",
         path    => $command_path,
         unless  => "grep 'tcp --dport 5900:6400 -j ACCEPT' /etc/sysconfig/iptables",
+        require => Exec['udp 53'],
     }
 }
