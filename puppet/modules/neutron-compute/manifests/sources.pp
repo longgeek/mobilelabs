@@ -20,7 +20,7 @@ class neutron-compute::sources {
                         python setup.py develop",
         path        => $command_path,
         cwd         => "$sources_dir/sources/neutron/",
-        require     => Exec['install neutron'],
+        require     => Exec['untar neutron.zip'],
         refreshonly => true,
     }
 }
