@@ -51,6 +51,7 @@ cp -rf $TOP_DIR/*-requirements /var/www/cobbler/repo_mirror/
 umount /opt/$DVD_NAME > /dev/null 2>&1
 ##mount -t auto -o loop /opt/$DVD1_NAME /repo/dvd1
 mount -t auto -o loop /opt/$DVD_NAME /repo/dvd
+grep "$DVD_NAME" /etc/rc.d/rc.local || echo "mount -t auto -o loop /opt/$DVD_NAME /repo/dvd" >> /etc/rc.d/rc.local
 [ -e /etc/yum.repos.d/backup ] || mkdir /etc/yum.repos.d/backup
 mv /etc/yum.repos.d/*.repo /etc/yum.repos.d/backup
 ##cat > /etc/yum.repos.d/local.repo << _Longgeek_
@@ -80,12 +81,14 @@ gpgcheck=0
 priority=1
 _Longgeek_
 yum clean all
-yum update
+yum -y update
 
 ### Install Cobbler ###
 yum -y install cman ntp tftp tftp-server xinetd cobbler cobbler-web httpd pykickstart dnsmasq puppet-server
-/etc/init.d/cobblerd restart
-/etc/init.d/httpd restart
+ps aux | grep -v grep | grep cobblerd > /dev/null 2>&1 || /etc/init.d/cobblerd start
+ps aux | grep -v grep | grep cobblerd > /dev/null 2>&1 && /etc/init.d/cobblerd restart
+ps aux | grep -v grep | grep httpd > /dev/null 2>&1 || /etc/init.d/httpd start
+ps aux | grep -v grep | grep httpd > /dev/null 2>&1 && /etc/init.d/httpd restart
 
 sed -i '/disable.*$/ s/yes/no/g' /etc/xinetd.d/tftp
 sed -i '/disable.*$/ s/yes/no/g' /etc/xinetd.d/rsync
@@ -95,7 +98,8 @@ sed -i 's/= manage_bind/= manage_dnsmasq/g' /etc/cobbler/modules.conf
 [ -e $COBBLER_CONFIG.backup ] || cp $COBBLER_CONFIG $COBBLER_CONFIG.backup
 sed -i 's/^[[:space:]]\+/ /' $COBBLER_CONFIG
 sed -i 's/allow_dynamic_settings: 0/allow_dynamic_settings: 1/g' $COBBLER_CONFIG
-/etc/init.d/cobblerd restart
+ps aux | grep -v grep | grep cobblerd > /dev/null 2>&1 || /etc/init.d/cobblerd start
+ps aux | grep -v grep | grep cobblerd > /dev/null 2>&1 && /etc/init.d/cobblerd restart
 
 cobbler setting edit --name=pxe_just_once --value=1
 cobbler setting edit --name=server --value=$IPADDR
@@ -117,7 +121,8 @@ grep $IPADDR /etc/ntp.conf ||
 echo "server $IPADDR
 server 127.127.1.0
 fudge 127.127.1.0 stratum 10" >> /etc/ntp.conf
-/etc/init.d/ntpd restart
+ps aux | grep -v grep | grep ntpd > /dev/null 2>&1 || /etc/init.d/ntpd start
+ps aux | grep -v grep | grep ntpd > /dev/null 2>&1 && /etc/init.d/ntpd restart
 
 cat > /etc/cobbler/dnsmasq.template << _Longgeek_
 # Cobbler generated configuration file for dnsmasq
@@ -217,7 +222,9 @@ chkconfig cobblerd on
 chkconfig puppetmaster on
 /etc/init.d/sshd restart
 /etc/init.d/httpd restart
-/etc/init.d/xinetd restart
 /etc/init.d/dnsmasq restart
 /etc/init.d/cobblerd restart
-/etc/init.d/puppetmaster restart
+ps aux | grep -v grep | grep xinetd > /dev/null 2>&1 || /etc/init.d/xinetd start
+ps aux | grep -v grep | grep xinetd > /dev/null 2>&1 && /etc/init.d/xinetd restart
+ps aux | grep -v grep | grep puppetmaster > /dev/null 2>&1 || /etc/init.d/puppetmaster start
+ps aux | grep -v grep | grep puppetmaster > /dev/null 2>&1 && /etc/init.d/puppetmaster restart
