@@ -1,31 +1,32 @@
-node 'control' {
-    Class['bases'] -> Class['mysql'] -> Class['rabbitmq'] -> Class['keystone'] -> Class['glance'] -> Class['nova-control'] -> Class['horizon'] -> Class['neutron-control']
-    include bases, mysql, rabbitmq, keystone, glance, nova-control, horizon, neutron-control
-}
+#node 'control1' {
+#    Class['bases'] -> Class['mysql'] -> Class['rabbitmq'] -> Class['keystone'] -> Class['glance'] -> Class['nova-control'] -> Class['horizon'] -> Class['neutron-control']
+#    include bases, mysql, rabbitmq, keystone, glance, nova-control, horizon, neutron-control
+#}
+#
+#node 'network1' {
+#    include bases, neutron-network
+#}
 
-node 'network' {
-    include bases, neutron-network
-}
+#node 'compute1' {
+#    include bases, nova-compute, neutron-compute
+#}
 
-node 'compute' {
-    include bases, nova-compute, neutron-compute
-}
-
-$command_path                       = '/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin:/bin/bash'
+$command_path                       = '/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/bin/bash'
 $sources_dir                        = '/thstack'
+$root_password                      = 'thstack.com'
 
 
 $mysql_host                         = '192.168.3.40'
 $mysql_root_pass                    = 'thstack.com'
 $rabbit_host                        = '192.168.3.40'
-$rabbit_password                    = 'guest'
-
+$rabbit_password                    = 'thstack.com'
 
 $keystone_host                      = '192.168.3.40'
 $keystone_db_name                   = 'keystone'
 $keystone_db_user                   = 'keystone'
 $keystone_db_password               = 'keystone'
 $memcache_host                      = '192.168.3.40'
+
 $os_tenant_name                     = 'admin'
 $os_username                        = 'admin'
 $os_password                        = 'password'
@@ -52,6 +53,7 @@ $nova_db_password                   = 'nova'
 $nova_user                          = 'nova'
 $nova_password                      = 'password'
 $nova_host                          = '192.168.3.40'
+$nova_compute_host                  = '192.168.3.42'
 
 $neutron_host                       = '192.168.3.40'
 $neutron_db_name                    = 'neutron'
@@ -60,10 +62,5 @@ $neutron_db_password                = 'neutron'
 $neutron_user                       = 'neutron'
 $neutron_password                   = 'password'
 $br_ex                              = 'eth0'
-
-#$cinder_host                        = '192.168.3.40'
-#$cinder_db_name                     = 'cinder'
-#$cinder_db_user                     = 'cinder'
-#$cinder_db_password                 = 'cinder'
-#$cinder_user                        = 'cinder'
-#$cinder_password                    = 'password'
+$br_int                             = 'eth1'
+$network_vlan_ranges                = '1000:2999'

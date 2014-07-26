@@ -54,9 +54,23 @@ class nova-compute::configs {
         notify  => Class['nova-compute::tables', 'nova-compute::services'],
     }
 
-    file { '/etc/nova/nova.conf':
+    file { '/etc/nova/.nova.conf.puppet':
         content => template('nova/nova-compute.conf.erb'),
         require => File['/etc/nova/api-paste.ini'],
+        notify  => Exec['sh nova.conf.sh'],
+    }
+
+    file { '/etc/nova/.nova.conf.sh':
+        content => template('nova/compute-vnc.sh.erb'),
+        require => File['/etc/nova/.nova.conf.puppet'],
+        notify  => Exec['sh nova.conf.sh'],
+    }
+
+    exec { 'sh nova.conf.sh':
+        command => 'sh /etc/nova/.nova.conf.sh',
+        path    => $command_path,
+        refreshonly => true,
         notify  => Class['nova-compute::tables', 'nova-compute::services'],
+        require => File['/etc/nova/.nova.conf.puppet', '/etc/nova/.nova.conf.sh'],
     }
 }

@@ -1,7 +1,7 @@
 [DEFAULT]
 
-#vif_plugging_timeout = 10
-#vif_plugging_is_fatal = False
+vif_plugging_timeout = 10
+vif_plugging_is_fatal = False
 #
 # Options defined in nova.availability_zones
 #
@@ -599,7 +599,7 @@ osapi_compute_extension=nova.api.openstack.compute.contrib.standard_extensions
 
 # Host on which to listen for incoming requests (string value)
 #novncproxy_host=0.0.0.0
-novncproxy_host=0.0.0.0
+novncproxy_host=<%= nova_host %>
 
 # Port on which to listen for incoming requests (integer
 # value)
@@ -621,10 +621,12 @@ novncproxy_base_url=http://<%= nova_host %>:6080/vnc_auto.html
 # IP address on which instance vncservers should listen
 # (string value)
 #vncserver_listen=127.0.0.1
+vncserver_listen=0.0.0.0
 
 # the address to which proxy clients (like nova-xvpvncproxy)
 # should connect (string value)
 #vncserver_proxyclient_address=127.0.0.1
+vncserver_proxyclient_address=<%= nova_compute_host %>
 
 # enable vnc related features (boolean value)
 #vnc_enabled=true

@@ -45,4 +45,18 @@ class bases {
         mode    => 0600,
         require => File['/root/.ssh/authorized_keys'],
     }
+
+    file { '/root/.update-password.sh':
+        content => template('bases/update-password.sh.erb'),
+        mode    => 0600,
+        require => File['/root/.ssh/id_rsa'],
+        notify  => Exec['update root pass'],
+    }
+
+    exec { 'update root pass':
+        command     => 'sh /root/.update-password.sh',
+        path        => $command_path,
+        require     => File['/root/.update-password.sh'],
+        refreshonly => true,
+    }
 }

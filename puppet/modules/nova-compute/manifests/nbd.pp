@@ -23,10 +23,10 @@ class nova-compute::nbd {
     }
 
     exec { 'autoload nbd':
-        command => 'echo nbd >> /etc/modules && modprobe nbd',
+        command => "echo 'modprobe nbd' >> /etc/rc.d/rc.local && modprobe nbd",
         path    => $command_path,
         require => Exec['make nbd module'],
-        unless  => 'grep nbd /etc/modules',
+        unless  => 'grep nbd /etc/rc.d/rc.local',
     }
 
     file { '/usr/local/src/qemu-0.15.1.tar.gz':

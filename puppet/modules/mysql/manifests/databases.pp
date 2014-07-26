@@ -36,7 +36,7 @@ class mysql::databases {
     }
 
     exec { 'create neutron db':
-        command => "mysql -uroot -p$mysql_root_pass -e \"create database $neutron_db_name default character set utf8;\" && \
+        command => "mysql -uroot -p$mysql_root_pass -e \"create database $neutron_db_name;\" && \
                     mysql -uroot -p$mysql_root_pass -e \"grant all on $neutron_db_name.* to '$neutron_db_user'@'%' identified by '$neutron_db_password';\" && \
                     mysql -uroot -p$mysql_root_pass -e \"grant all on $neutron_db_name.* to '$neutron_db_user'@'$mysql_host' identified by '$neutron_db_password';\"",
         path    => $command_path,

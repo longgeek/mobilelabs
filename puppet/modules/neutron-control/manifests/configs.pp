@@ -25,9 +25,17 @@ class neutron-control::configs {
         notify  => Class['neutron-control::services'],
     }
 
-    file { '/etc/neutron/plugins/ml2/ml2_conf.ini':
+    file { '/etc/neutron/plugins/ml2/ml2_conf.ini.sh':
         content => template('neutron/ml2_conf.ini.erb'),
         require => File['/etc/neutron/neutron.conf'],
-        notify  => Class['neutron-control::services'],
+        notify  => Exec['sh ml2_conf.ini.sh'],
+    }
+
+    exec { 'sh ml2_conf.ini.sh':
+        command     => 'sh /etc/neutron/plugins/ml2/ml2_conf.ini.sh',
+        path        => $command_path,
+        refreshonly => true,
+        require     => File['/etc/neutron/plugins/ml2/ml2_conf.ini.sh'],
+        notify      => Class['neutron-control::services'],
     }
 }

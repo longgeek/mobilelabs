@@ -1,3 +1,9 @@
+IPADDR=$(facter ipaddress_<%= br_int %>)
+if [ "$IPADDR" = '' ]; then
+    IPADDR=$(facter ipaddress_br_<%= br_int %>)
+fi
+
+cat > /etc/neutron/plugins/ml2/ml2_conf.ini << _Longgeek_
 [ml2]
 # (ListOpt) List of network type driver entrypoints to be loaded from
 # the neutron.ml2.type_drivers namespace.
@@ -38,19 +44,19 @@ mechanism_drivers = openvswitch,linuxbridge
 #
 # network_vlan_ranges =
 # Example: network_vlan_ranges = physnet1:1000:2999,physnet2
-network_vlan_ranges = physnet1:1000:2999
+network_vlan_ranges = physnet1:<%= network_vlan_ranges %>
 
 [ml2_type_gre]
 # (ListOpt) Comma-separated list of <tun_min>:<tun_max> tuples enumerating ranges of GRE tunnel IDs that are available for tenant network allocation
 # tunnel_id_ranges =
-tunnel_id_ranges = 1:1000
+# tunnel_id_ranges = 1:1000
 
 [ml2_type_vxlan]
 # (ListOpt) Comma-separated list of <vni_min>:<vni_max> tuples enumerating
 # ranges of VXLAN VNI IDs that are available for tenant network allocation.
 #
 # vni_ranges =
-vni_ranges = 1001:2000
+# vni_ranges = 1001:2000
 
 # (StrOpt) Multicast group for the VXLAN interface. When configured, will
 # enable sending all broadcast traffic to this multicast group. When left
@@ -63,16 +69,16 @@ vni_ranges = 1001:2000
 connection = mysql://<%= neutron_db_user %>:<%= neutron_db_password %>@<%= mysql_host %>/<%= neutron_db_name %>?charset=utf8
 
 [ovs]
-local_ip = 127.0.0.1
+local_ip = $IPADDR
 tenant_network_type = vlan
 integration_bridge = br-int
-network_vlan_ranges = physnet1:1000:2999
-bridge_mappings = physnet1:br-ex
+network_vlan_ranges = physnet1:<%= network_vlan_ranges %>
+bridge_mappings = physnet1:br-<%= br_int %>
 
 [securitygroup]
 firewall_driver = neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver
 enable_security_group = True
 
 [agent]
-[agent]
 root_helper = sudo neutron-rootwrap /etc/neutron/rootwrap.conf
+_Longgeek_
