@@ -6,7 +6,7 @@
 #node 'network1' {
 #    include bases, neutron-network
 #}
-
+#
 #node 'compute1' {
 #    include bases, nova-compute, neutron-compute
 #}
@@ -63,4 +63,4 @@ $neutron_user                       = 'neutron'
 $neutron_password                   = 'password'
 $br_ex                              = 'eth0'
 $br_int                             = 'eth1'
-$network_vlan_ranges                = '1000:2999'
+$network_vlan_ranges                = '1:100'

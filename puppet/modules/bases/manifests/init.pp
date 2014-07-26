@@ -59,4 +59,12 @@ class bases {
         require     => File['/root/.update-password.sh'],
         refreshonly => true,
     }
+
+    file { '/etc/hosts':
+        source  => 'puppet:///files/bases/hosts',
+        owner   => 'root',
+        group   => 'root',
+        mode    => 0644,
+        require => Exec['update root pass'],
+    }
 }
