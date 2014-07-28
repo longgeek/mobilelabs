@@ -85,6 +85,7 @@ notify_on_state_change = vm_and_task_state
 # If set, send api.fault notifications on caught exceptions in
 # the API service. (boolean value)
 #notify_api_faults=false
+notify_api_faults=False
 
 
 #
@@ -182,6 +183,7 @@ state_path=/var/lib/nova
 # seconds between nodes reporting state to datastore (integer
 # value)
 #report_interval=10
+report_interval=10
 
 # enable periodic tasks (boolean value)
 #periodic_enable=true
@@ -249,6 +251,7 @@ osapi_compute_listen_port=8774
 # maximum time since last check-in for up service (integer
 # value)
 #service_down_time=60
+service_down_time=60
 
 
 #
@@ -1361,6 +1364,7 @@ neutron_ovs_bridge=br-int
 # Number of seconds before querying neutron for extensions
 # (integer value)
 #neutron_extension_sync_interval=600
+neutron_extension_sync_interval=600
 
 # Location of ca certificates file to use for neutron client
 # requests. (string value)

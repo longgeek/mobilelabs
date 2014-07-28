@@ -85,6 +85,7 @@ notify_on_state_change = vm_and_task_state
 # If set, send api.fault notifications on caught exceptions in
 # the API service. (boolean value)
 #notify_api_faults=false
+notify_api_faults=false
 
 
 #
@@ -182,6 +183,7 @@ state_path=/var/lib/nova
 # seconds between nodes reporting state to datastore (integer
 # value)
 #report_interval=10
+report_interval=10
 
 # enable periodic tasks (boolean value)
 #periodic_enable=true
@@ -222,13 +224,13 @@ osapi_compute_listen_port=8774
 #metadata_manager=nova.api.manager.MetadataManager
 
 # IP address for metadata api to listen (string value)
-#metadata_listen=0.0.0.0
+metadata_listen=0.0.0.0
 
 # port for metadata api to listen (integer value)
-#metadata_listen_port=8775
+metadata_listen_port=8775
 
 # Number of workers for metadata service (integer value)
-#metadata_workers=<None>
+metadata_workers=<None>
 
 # full class name for the Manager for compute (string value)
 #compute_manager=nova.compute.manager.ComputeManager
@@ -249,6 +251,7 @@ osapi_compute_listen_port=8774
 # maximum time since last check-in for up service (integer
 # value)
 #service_down_time=60
+service_down_time=60
 
 
 #
@@ -1360,6 +1363,7 @@ neutron_ovs_bridge=br-int
 # Number of seconds before querying neutron for extensions
 # (integer value)
 #neutron_extension_sync_interval=600
+neutron_extension_sync_interval=600
 
 # Location of ca certificates file to use for neutron client
 # requests. (string value)
