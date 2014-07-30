@@ -1,7 +1,0 @@
-127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
-#::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
-
-192.168.3.60 www.pxe.com www
-192.168.3.40 control1.pxe.com control1
-192.168.3.41 network1.pxe.com network1
-192.168.3.42 compute1.pxe.com compute1
