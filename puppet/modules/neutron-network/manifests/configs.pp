@@ -88,15 +88,28 @@ class neutron-network::configs {
         require => File['/etc/neutron/metering_agent.ini'],
     }
 
-    file { '/etc/neutron/neutron.conf':
+    file { '/etc/neutron/.neutron.conf.puppet':
         content => template('neutron/neutron.conf.erb'),
         require => File['/etc/neutron/services/loadbalancer/haproxy/lbaas_agent.ini'],
-        notify  => Class['neutron-network::services'],
+    }
+
+    file { '/etc/neutron/.get-service-tenant.sh':
+        content => template('neutron/get-service-tenant.sh.erb'),
+        require => File['/etc/neutron/.neutron.conf.puppet'],
+        notify  => Exec['update neutron.conf'],
+    }
+
+    exec { 'update neutron.conf':
+        command     => 'sh /etc/neutron/.get-service-tenant.sh',
+        path        => $command_path,
+        refreshonly => true,
+        require     => File['/etc/neutron/.get-service-tenant.sh'],
+        notify      => Class['neutron-network::services'],
     }
 
     file { '/etc/neutron/dhcp_agent.ini':
         source  => 'puppet:///files/neutron/etc/dhcp_agent.ini',
-        require => File['/etc/neutron/neutron.conf'],
+        require => Exec['update neutron.conf'],
         notify  => Class['neutron-network::services'],
     }
 
