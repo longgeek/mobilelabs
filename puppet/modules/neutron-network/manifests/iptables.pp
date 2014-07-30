@@ -10,7 +10,7 @@ class neutron-network::iptables {
         command => 'iptables -A INPUT -p udp -m multiport --dports 67 -j ACCEPT; \
                     /etc/init.d/iptables save',
         path    => $command_path,
-        unless  => "grep '--dports 67 -j ACCEPT' /etc/sysconfig/iptables",
+        unless  => "grep '\--dports 67 -j ACCEPT' /etc/sysconfig/iptables",
         require => Exec['9697'],
     }
 
@@ -18,7 +18,7 @@ class neutron-network::iptables {
         command => 'iptables -A OUTPUT -p udp -m multiport --dports 68 -j ACCEPT; \
                     /etc/init.d/iptables save',
         path    => $command_path,
-        unless  => "grep '--dports 68 -j ACCEPT' /etc/sysconfig/iptables",
+        unless  => "grep '\--dports 68 -j ACCEPT' /etc/sysconfig/iptables",
         require => Exec['67'],
     }
 }
