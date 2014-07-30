@@ -3,5 +3,5 @@
 source /etc/profile
 SERVICE_TENANT=$(keystone tenant-get <%= service_tenant_name %> | awk '/ id / { print $4 }')
 
-sed -i "s/nova_admin_tenant_id.*$/^nova_admin_tenant_id = $SERVICE_TENANT/g" /etc/neutron/.neutron.conf.puppet
+sed -i "s/^nova_admin_tenant_id.*$/nova_admin_tenant_id = $SERVICE_TENANT/g" /etc/neutron/.neutron.conf.puppet
 cp /etc/neutron/.neutron.conf.puppet /etc/neutron/neutron.conf
