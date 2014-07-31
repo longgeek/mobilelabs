@@ -516,6 +516,7 @@ osapi_compute_extension=nova.api.openstack.compute.contrib.standard_extensions
 # Allows use of instance password during server creation
 # (boolean value)
 #enable_instance_password=true
+enable_instance_password=true
 
 
 #
@@ -2127,7 +2128,9 @@ firewall_driver = nova.virt.firewall.NoopFirewallDriver
 # Libvirt domain type (valid options are: kvm, lxc, qemu, uml,
 # xen) (string value)
 [libvirt]
-inject_partition = -2
+inject_partition = -1
+inject_password = true
+inject_key = true
 cpu_mode = none
 virt_type=qemu
 
@@ -2138,7 +2141,6 @@ virt_type=qemu
 # Inject the admin password at boot time, without an agent.
 # (boolean value)
 #libvirt_inject_password=false
-libvirt_inject_password=true
 
 # Inject the ssh public key at boot time (boolean value)
 #libvirt_inject_key=true
