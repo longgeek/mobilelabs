@@ -93,6 +93,15 @@ auth_url = '%s:5000' % auth_ip
 nova_url = '%s:8774' % nova_ip
 neutron_url = '%s:9696' % neutron_ip
 
+# Create the user env file for keystone authentication
+env_file = open('%s/user-env.sh' % os.path.expanduser('~'), 'w')
+env_file.write('#!/bin/bash\n')
+env_file.write('export OS_USERNAME=%s\n' % user_name)
+env_file.write('export OS_PASSWORD=%s\n' % user_password)
+env_file.write('export OS_TENANT_NAME=%s\n' % user_tenant_name)
+env_file.write('export OS_AUTH_URL=http://%s:5000/v2.0' % auth_ip)
+env_file.close()
+
 server_params = urllib.urlencode({})
 token_headers = {'Content-Type': 'application/json'}
 token_params = '{"auth":{"passwordCredentials":{"username": "'+user_name+'", "password":"'+user_password+'"}, "tenantName":"'+user_tenant_name+'"}}'
