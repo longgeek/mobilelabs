@@ -93,15 +93,6 @@ auth_url = '%s:5000' % auth_ip
 nova_url = '%s:8774' % nova_ip
 neutron_url = '%s:9696' % neutron_ip
 
-# Create the user env file for keystone authentication
-env_file = open('%s/user-env.sh' % os.path.expanduser('~'), 'w')
-env_file.write('#!/bin/bash\n')
-env_file.write('export OS_USERNAME=%s\n' % user_name)
-env_file.write('export OS_PASSWORD=%s\n' % user_password)
-env_file.write('export OS_TENANT_NAME=%s\n' % user_tenant_name)
-env_file.write('export OS_AUTH_URL=http://%s:5000/v2.0' % auth_ip)
-env_file.close()
-
 server_params = urllib.urlencode({})
 token_headers = {'Content-Type': 'application/json'}
 token_params = '{"auth":{"passwordCredentials":{"username": "'+user_name+'", "password":"'+user_password+'"}, "tenantName":"'+user_tenant_name+'"}}'
@@ -341,10 +332,22 @@ def create_server(api_token, user_tenant_id):
     nova_conn.request("POST", "/v2/%s/servers" % user_tenant_id, json.dumps(define_server), server_headers)
     server_response = nova_conn.getresponse()
     server_read = server_response.read()
-    server_date = json.loads(server_read)
+    server_data = json.loads(server_read)
     #print json.dumps(dd3, indent=2)
+
+    # Create the user env file for keystone authentication
+    env_file = open('%s/user-env.sh' % os.path.expanduser('~'), 'w')
+    env_file.write('#!/bin/bash\n')
+    env_file.write('export OS_USERNAME=%s\n' % user_name)
+    env_file.write('export OS_PASSWORD=%s\n' % user_password)
+    env_file.write('export OS_TENANT_NAME=%s\n' % user_tenant_name)
+    env_file.write('export OS_AUTH_URL=http://%s:5000/v2.0\n' % auth_ip)
+    env_file.write('export INSTANCE_NETWORK=%s\n' % server_networks)
+    env_file.write('export INSTANCE_PASSWORD=%s\n' % server_adminPass)
+    env_file.close()
+
     print '\nStart vm...'
-    print 'OK\n!'
+    print 'OK!\n'
 
 if __name__ == '__main__':
     auth_conn.close()
