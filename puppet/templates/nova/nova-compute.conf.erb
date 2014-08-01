@@ -219,6 +219,7 @@ osapi_compute_listen_port=8774
 
 # Number of workers for OpenStack API service (integer value)
 #osapi_compute_workers=<None>
+osapi_compute_workers=<%= nova_compute_workers %>
 
 # OpenStack metadata service manager (string value)
 #metadata_manager=nova.api.manager.MetadataManager
@@ -230,7 +231,7 @@ metadata_listen=0.0.0.0
 metadata_listen_port=8775
 
 # Number of workers for metadata service (integer value)
-metadata_workers=1
+metadata_workers=<%= nova_metadata_workers %>
 
 # full class name for the Manager for compute (string value)
 #compute_manager=nova.compute.manager.ComputeManager
@@ -2758,6 +2759,7 @@ libvirt_cpu_mode=none
 # Number of workers for OpenStack Conductor service (integer
 # value)
 #workers=<None>
+workers=<%= nova_conductor_workers %>
 
 
 [keymgr]

@@ -270,6 +270,7 @@ agent_down_time = 30
 # worker thread in the current process.  Greater than 0 launches that number of
 # child processes as workers.  The parent process manages them.
 # api_workers = 0
+api_workers = <%= neutron_api_workers %>
 # Sets the value of TCP_KEEPIDLE in seconds to use for each server socket when
 # starting API server. Not supported on OS X.
 # tcp_keepidle = 600
