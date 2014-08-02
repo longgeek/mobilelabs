@@ -11,7 +11,7 @@ fi
 which nova > /dev/null 2>&1
 
 if [ "$?" -ne '0' ]; then
-    echo -e '\nThe Nova command was not found, Please install the nova-pythonclient package.()\n'
+    echo -e '\nThe Nova command was not found, Please install the nova-pythonclient package.\n'
     exit 1
 fi
 
@@ -21,10 +21,25 @@ if [ "$?" -ne '0' ]; then
     echo -e '\nThe sshpass command was not found, Please install the sshpass source package.(http://colocrossing.dl.sourceforge.net/project/sshpass/sshpass/1.05/sshpass-1.05.tar.gz)\n'
     exit 1
 fi
+
+ip net > /dev/null 2>&1
+
+if [ "$?" -ne '0' ]; then
+    echo -e "\nThe 'ip net' command was not found, Please install or update the iproute package.\n"
+    exit 1
+fi
+
+ip net | grep -v grep | grep qdhcp-$INSTANCE_NETWORK > /dev/null 2>&1
+
+if [ "$?" -ne '0' ]; then
+    echo -e '\nCannot open network namespace, Execute the script to the network node.\n'
+    exit 1
+fi
+
 echo -e "\n$(date) Start Check...\n" | tee -a ~/instance-result.log
-echo '+----------------+---------------+-----------+-------------------------------+' | tee -a ~/instance-result.log
-echo '| VM-IP          | PING-RESULT   | SSH-KEY   | SSH-PASS   | HOSTNAME-MATCH   |' | tee -a ~/instance-result.log
-echo '+----------------+---------------+-----------+-------------------------------+' | tee -a ~/instance-result.log
+echo '+-----------------+---------------+-----------+-------------------------------+' | tee -a ~/instance-result.log
+echo '| VM-IP           | PING-RESULT   | SSH-KEY   | SSH-PASS   | HOSTNAME-MATCH   |' | tee -a ~/instance-result.log
+echo '+-----------------+---------------+-----------+-------------------------------+' | tee -a ~/instance-result.log
 
 CONN_COMMAND="ip net exec qdhcp-$INSTANCE_NETWORK"
 # Get to the user vm
@@ -62,7 +77,11 @@ do
         SSH_PASS='xxx'
         HOSTNAME_MATCH='xxx'
     fi
-    echo "| $IP     | $PING_RESULT           | $SSH_KEY       | $SSH_PASS        | $HOSTNAME_MATCH              |" | tee -a ~/instance-result.log
+
+    IP_LEN=$(echo $IP | wc -L)
+    NONE_STR=$(python -c "print (' ' * (15-$IP_LEN))")
+
+    echo "| $IP$NONE_STR | $PING_RESULT           | $SSH_KEY       | $SSH_PASS        | $HOSTNAME_MATCH              |" | tee -a ~/instance-result.log
 
 done
-echo '+----------------+---------------+-----------+-------------------------------+' | tee -a ~/instance-result.log
+echo '+-----------------+---------------+-----------+-------------------------------+' | tee -a ~/instance-result.log
