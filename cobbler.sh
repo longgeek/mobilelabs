@@ -87,8 +87,7 @@ yum -y update
 yum -y install cman ntp tftp tftp-server xinetd cobbler cobbler-web httpd pykickstart dnsmasq puppet-server
 ps aux | grep -v grep | grep cobblerd > /dev/null 2>&1 || /etc/init.d/cobblerd start
 ps aux | grep -v grep | grep cobblerd > /dev/null 2>&1 && /etc/init.d/cobblerd restart
-ps aux | grep -v grep | grep httpd > /dev/null 2>&1 || /etc/init.d/httpd start
-ps aux | grep -v grep | grep httpd > /dev/null 2>&1 && /etc/init.d/httpd restart
+/etc/init.d/httpd restart > /dev/null 2>&1
 
 sed -i '/disable.*$/ s/yes/no/g' /etc/xinetd.d/tftp
 sed -i '/disable.*$/ s/yes/no/g' /etc/xinetd.d/rsync

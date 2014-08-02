@@ -2,11 +2,11 @@
 # Author: Longgeek <longgeek@gmail.com>
 
 clear
-echo "\n"
+echo -e "\n"
 echo '#########################'
 echo 'Note: Update nameservers!'
 echo '#########################'
-echo "\n"
+echo -e "\n"
 exit 0
 
 cobbler system  add \
