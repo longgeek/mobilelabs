@@ -58,7 +58,7 @@ default_availability_zone=nova
 #
 
 # ip address of this host (string value)
-my_ip=<%= nova_host %>
+my_ip=<%= nova_novncproxy_host %>
 
 # Name of this node.  This can be an opaque identifier.  It is
 # not necessarily a hostname, FQDN, or IP address. However,
@@ -604,7 +604,7 @@ enable_instance_password=true
 
 # Host on which to listen for incoming requests (string value)
 #novncproxy_host=0.0.0.0
-novncproxy_host=<%= nova_host %>
+novncproxy_host=<%= nova_novncproxy_host %>
 
 # Port on which to listen for incoming requests (integer
 # value)
@@ -617,7 +617,7 @@ novncproxy_port=6080
 # location of vnc console proxy, in the form
 # "http://127.0.0.1:6080/vnc_auto.html" (string value)
 #novncproxy_base_url=http://127.0.0.1:6080/vnc_auto.html
-novncproxy_base_url=http://<%= nova_host %>:6080/vnc_auto.html
+novncproxy_base_url=http://<%= nova_novncproxy_host %>:6080/vnc_auto.html
 
 # location of nova xvp vnc console proxy, in the form
 # "http://127.0.0.1:6081/console" (string value)
